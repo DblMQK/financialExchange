@@ -2,9 +2,10 @@ package enum
 
 import (
 	//"google/uuid"
-	"uuid"
-	"time"
+	"log/slog"
 	"math"
+	"time"
+	"uuid"
 )
 
 type Side int8
@@ -78,6 +79,18 @@ type Order struct {
 	Status OrderStatus
 	CreatedAt time.Time
 	UpdatedAt time.Time
+}
+
+func LogOrderState(order Order, logger *slog.Logger){
+	logger.Info("Статус сделки ",
+			slog.String("Type", order.Side.String()),
+			slog.String("Type", order.Type.String()),
+			slog.String("Status: ", order.Status.String()),
+			slog.Float64("Value: ", order.Price),
+			slog.Float64("Quantity", order.Quantity),
+			slog.String("Symbo", order.Symbo),
+			slog.String("TraderID", order.TraderID.String()),
+			slog.String("Date ", order.UpdatedAt.String()))
 }
 
 func (order *Order) Remaining() float64 {
