@@ -78,8 +78,15 @@ func main(){
 						UpdatedAt: time.Now().UTC(),
 						}
 
-	orderBook.Put(uuidOrder1, orderBuy)
-	orderBook.Put(uuidOrder2, orderSell)
+	enum.LogOrderState(orderBuy, logger)
+	fmt.Scanln()
+	orderBook.Put(uuidOrder1, &orderBuy)
+	orderBook.Put(uuidOrder2, &orderSell)
+
+	fmt.Scanln()
+
+	orderBook.Update(uuidOrder1, modifiers.ModifierForOrder(orderSell.Quantity), logger)
+	orderBook.Update(uuidOrder2, modifiers.ModifierForOrder(orderBuy.Quantity), logger)
 
 	logger.Info("Зарегистрирована сделка",
 			slog.String("Type", orderBuy.Type.String()),
