@@ -2,6 +2,7 @@ package storage
 
 import (
 	"financialExchange/enum"
+	"log/slog"
 	"sync"
 )
 
@@ -51,7 +52,7 @@ func convertToOrder(value any) enum.Order{
 }
 
 // Update обновляет значение по ключу с помощью функции modif.
-func (store *Store[K, V]) Update(key K, modif func(V) V) (V, bool) {
+func (store *Store[K, V]) Update(key K, modif func(V) V, logger * slog.Logger) (V, bool) {
 	store.mutex.Lock()         // Блокирует доступ к данным на время операции
 	defer store.mutex.Unlock() // Разблокирует доступ при завершении функции
 
@@ -62,7 +63,7 @@ func (store *Store[K, V]) Update(key K, modif func(V) V) (V, bool) {
 	}
 
 	UpdatedValue := modif(value)                              // Вычисляет новое значение с помощью функции modif
-	enum.LogOrderState(convertToOrder(UpdaterValue), logger)  // Логирует состояние ордера
+	enum.LogOrderState(convertToOrder(UpdatedValue), logger)  // Логирует состояние ордера
 
 	return UpdatedValue, true // Возвращает новое значение и true
 }
