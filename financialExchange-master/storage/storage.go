@@ -45,18 +45,21 @@ func (store *Store[K, V]) Delete(key K, value V) bool {
 	return true
 }
 
+// Update обновляет значение по ключу с помощью функции modif.
 func (store *Store[K, V]) Update(key K, modif func(V) V) (V, bool) {
-	store.mutex.Lock()
-	defer store.mutex.Unlock()
+	store.mutex.Lock()         // Блокирует доступ к данным на время операции
+	defer store.mutex.Unlock() // Разблокирует доступ при завершении функции
 
-	value, ok := store.items[key]
+	value, ok := store.items[key] // Получает значение по ключу
 	if !ok {
-		var zero V
-		return zero, false
+		var zero V         // Инициализирует нулевое значение типа V
+		return zero, false // Возвращает нулевое значение и false, если ключ не найден
 	}
 
-	UpdatedValue := modif(value)
-	return UpdatedValue, true
+	UpdatedValue := modif(value)                              // Вычисляет новое значение с помощью функции modif
+	enum.LogOrderState(convertToOrder(UpdaterValue), logger)  // Логирует состояние ордера
+
+	return UpdatedValue, true // Возвращает новое значение и true
 }
 
 type IndexedStorage[K comparable, V any] struct {
