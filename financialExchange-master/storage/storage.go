@@ -1,10 +1,11 @@
 package storage
 
 import (
+	"financialExchange/enum"
 	"sync"
 )
 
-// sync.Mutex полностью блокирует доступ и для чтения и для записи. 
+// sync.Mutex полностью блокирует доступ и для чтения и для записи.
 // RWMutex позволяет потокам читать данные одновременно, но запись осуществляется только одним потоком
 
 type Store[K comparable, V any] struct {
@@ -43,6 +44,10 @@ func (store *Store[K, V]) Delete(key K, value V) bool {
 
 	delete(store.items, key)
 	return true
+}
+
+func convertToOrder(value any) enum.Order{
+	return value.(enum.Order) //value типа any, в нём может лежать чё угодно, в том числе и order
 }
 
 // Update обновляет значение по ключу с помощью функции modif.
